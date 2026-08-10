@@ -6,6 +6,8 @@ import CVForm from "@/components/CVForm";
 import CVPreview from "@/components/CVPreview";
 import { CVData, initialCVData } from "@/types/cv";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://laravel-api-production-1d1e.up.railway.app";
+
 export default function Home() {
   const [cvData, setCvData] = useState<CVData>(initialCVData);
   const [isSaving, setIsSaving] = useState(false);
@@ -13,8 +15,7 @@ export default function Home() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Sending data to Laravel 12 Backend
-      const response = await fetch("http://localhost:8000/api/cvs", {
+      const response = await fetch(`${API_URL}/api/cvs`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,7 +29,7 @@ export default function Home() {
         console.log("Saved successfully:", result);
         alert("CV Saved to Database!");
       } else {
-        console.error("Failed to save:", response.statusText);
+        console.error("Failed to save:", response.status, response.statusText);
         alert("Error saving CV.");
       }
     } catch (error) {
@@ -41,10 +42,10 @@ export default function Home() {
 
   return (
     <main className="flex h-screen bg-gray-100">
-      <CVForm 
-        data={cvData} 
-        onDataChange={setCvData} 
-        onSave={handleSave} 
+      <CVForm
+        data={cvData}
+        onDataChange={setCvData}
+        onSave={handleSave}
       />
       <CVPreview data={cvData} />
     </main>
